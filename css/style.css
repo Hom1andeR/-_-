@@ -70,7 +70,7 @@ body{
     border-radius:4px;
     padding:4px;
 }
-.creator > [type="text"]{
+[type="text"]{
     margin-left:7px;
     border:2px solid rgb(107, 158, 26);
     border-radius:4px;

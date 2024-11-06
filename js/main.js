@@ -33,6 +33,7 @@ Vue.component('creator', {
                     hour: new Date().getHours(),
                     min: new Date().getMinutes(),
                 },
+                reasonRefund: null,
                 title: null,
                 description: null,
                 deadline:null,
@@ -93,7 +94,9 @@ Vue.component('card', {
     },
     data(){
         return{
+            errorRefund: null,
             cardRedactionFlag: false,
+            showReasonRefundFlag: false,
             blankForRedaction:{
                 dateOfRed:{
                     year: new Date().getFullYear(),
@@ -140,11 +143,24 @@ Vue.component('card', {
 
             <p><b>Сделать до:</b> {{exampleCard.deadline}}</p>
 
+            <p v-if="exampleCard.reasonRefund && !showReasonRefundFlag" ><b>Нужно <span v-if="column_id=='third'">было</span> доработать </b> {{ exampleCard.reasonRefund }} </p>
+
             <button class="btn_style" v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="deleteCard(indexInList)">Удалить</button>
-            <button class="btn_style" v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="cardRedactionFlag= true">Редактировать</button>
+            <button class="btn_style" v-show="(column_id=='first' || column_id=='second') && !cardRedactionFlag" @click.prevent="cardRedactionFlag= true">Редактировать</button>
             <button class="btn_style" v-show="cardRedactionFlag" @click.prevent="cancelRedaction">Отмена</button>
             <button  class="btn_style" v-show="cardRedactionFlag" @click.prevent="submitRedForm">Сохранить</button>
             <button class="move_btn btn_style" v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="moveCardToSecond"> >> </button>
+            <button class="move_btn btn_style" v-show="column_id=='second' && !cardRedactionFlag" @click.prevent="moveCardToThird"> >> </button>
+
+            <button class="move_btn btn_style" v-show="column_id=='third' && !showReasonRefundFlag" @click.prevent="showReasonRefundFlag= true"> << </button>
+            <p v-if="showReasonRefundFlag"><b>Причина возврата:</b>
+                <span v-if="showReasonRefundFlag && errorRefund != null" class="red_text"> {{ errorRefund }} </span> 
+                <input v-if="showReasonRefundFlag" type="text" v-model="exampleCard.reasonRefund">   
+            </p>
+            <button class="move_btn btn_style" v-show="column_id=='third' && showReasonRefundFlag" @click.prevent="showReasonRefundFlag= false">Отмена</button>
+            <button class="move_btn btn_style" v-show="column_id=='third' && showReasonRefundFlag" @click.prevent="moveCardToSecondFromThird">Вернуть</button>
+
+            <button class="move_btn btn_style" v-show="column_id=='third' && !cardRedactionFlag" @click.prevent="moveCardToFourth"> >> </button>
         </div>
         `
     ,
@@ -182,6 +198,27 @@ Vue.component('card', {
             let copy = this.copyCard();
             eventBus.$emit('move-card-to-second', copy);
             eventBus.$emit('delete-from-first', this.indexInList);
+        },
+        moveCardToThird(){
+            let copy = this.copyCard();
+            eventBus.$emit('move-card-to-third', copy);
+            eventBus.$emit('delete-from-second', this.indexInList);
+        },
+        moveCardToSecondFromThird(){
+            this.errorRefund= null;
+            if(!this.exampleCard.reasonRefund){
+                this.errorRefund = "Нужно указать причину возврата"
+            }else{
+                let copy = this.copyCard();
+                eventBus.$emit('move-card-to-second', copy);
+                eventBus.$emit('delete-from-third', this.indexInList);
+            }
+
+        },
+        moveCardToFourth(){
+            let copy = this.copyCard();
+            eventBus.$emit('move-card-to-fourth', copy);
+            eventBus.$emit('delete-from-third', this.indexInList);
         },
         deleteCard(index){
             eventBus.$emit('delete-from-first',(index));
@@ -251,6 +288,28 @@ Vue.component('column', {
 
             eventBus.$on('move-card-to-second', (copy)=>{
                 if(this.column_id=='second'){
+                    this.list.push(copy);
+                }
+            }),
+
+            eventBus.$on('move-card-to-third', (copy)=>{
+                if(this.column_id=='third'){
+                    this.list.push(copy);
+                }
+            }),
+
+            eventBus.$on('delete-from-second',(index)=>{
+                if(this.column_id=='second'){
+                    this.list.splice(index, 1);
+                }
+            }),
+            eventBus.$on('delete-from-third',(index)=>{
+                if(this.column_id=='third'){
+                    this.list.splice(index, 1);
+                }
+            }),
+            eventBus.$on('move-card-to-fourth', (copy)=>{
+                if(this.column_id=='fourth'){
                     this.list.push(copy);
                 }
             })
