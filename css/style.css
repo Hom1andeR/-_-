@@ -95,3 +95,13 @@ body{
 .creator > div{
     margin:7px;
 }
+.create-card-botton{
+    margin:15px;
+    padding:15px;
+    border-radius:7px;
+    border:2px solid rgb(107, 158, 26);
+    background-color: rgb(238, 253, 221);
+    color:rgb(94, 150, 5);
+    font-size:20px;
+    font-weight: 700;
+}
