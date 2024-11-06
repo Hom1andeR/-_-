@@ -10,6 +10,9 @@ Vue.component('creator', {
     template:
         `
         <div class="creator">
+            <div v-if="errors.length" v-for="el in errors">
+                <p class="red_text">Ошибка: {{ el }} !</p>
+            </div>
             <p><b>Название</b></p>
             <input type="text" v-model="blank.title">
             <p>Описание</p>
@@ -21,6 +24,7 @@ Vue.component('creator', {
     `,
     data(){
         return{
+            errors: [],
             blank:{
                 date:{
                     year: new Date().getFullYear(),
@@ -31,7 +35,7 @@ Vue.component('creator', {
                 },
                 title: null,
                 description: null,
-                deadLine:null,
+                deadline:null,
                 dateOfRed:{
                     year: null,
                     month: null,
@@ -44,8 +48,21 @@ Vue.component('creator', {
     },
     methods:{
         submitCreateForm(){
-            let copy = this.copyCard();
-            eventBus.$emit('take-new-card', copy);
+            this.errors= [];
+            if(!this.blank.title){
+                this.errors.push('Заголовок обязателен');
+            }
+            if(!this.blank.description){
+                this.errors.push('Описание обязательно');
+            }
+            if(!this.blank.deadline){
+                this.errors.push('Срок сдачи обязателен');
+            }
+            if(!this.errors.length){
+                let copy = this.copyCard();
+                eventBus.$emit('take-new-card', copy);
+            }
+
         },
         copyCard(){
             let copy= Object.assign({}, this.blank);
@@ -87,7 +104,7 @@ Vue.component('card', {
                 },
                 title: null,
                 description: null,
-                deadLine:null,
+                deadline:null,
             }
         }
     },
