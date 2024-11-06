@@ -20,6 +20,7 @@ Vue.component('creator', {
             <p>Когда сделать</p>
             <input type="date" v-model="blank.deadline"><br>
             <button class="btn_style" @click.prevent="submitCreateForm">Добавить</button>
+            <button class="btn_style" @click.prevent="cancelCreateForm">Отмена</button>
         </div>
     `,
     data(){
@@ -28,12 +29,13 @@ Vue.component('creator', {
             blank:{
                 date:{
                     year: new Date().getFullYear(),
-                    month: new Date().getMonth(),
+                    month: (new Date().getMonth()) + 1,
                     day: new Date().getDate(),
                     hour: new Date().getHours(),
                     min: new Date().getMinutes(),
                 },
                 reasonRefund: null,
+
                 title: null,
                 description: null,
                 deadline:null,
@@ -44,6 +46,7 @@ Vue.component('creator', {
                     hour: null,
                     min: null,
                 },
+                overdueFlag: false,
             }
         }
     },
@@ -64,6 +67,9 @@ Vue.component('creator', {
                 eventBus.$emit('take-new-card', copy);
             }
 
+        },
+        cancelCreateForm(){
+            eventBus.$emit('cancel-create-card');
         },
         copyCard(){
             let copy= Object.assign({}, this.blank);
@@ -113,7 +119,8 @@ Vue.component('card', {
     },
     template:
         `
-        <div class="card-space">
+        <div :class="{'card-space' : !exampleCard.overdueFlag, 'red-card-space' : exampleCard.overdueFlag}">
+        
             <p><b>Название: {{exampleCard.title}}</b></p>
             <input type="text" v-if="cardRedactionFlag" v-model="blankForRedaction.title">
 
@@ -143,7 +150,7 @@ Vue.component('card', {
 
             <p><b>Сделать до:</b> {{exampleCard.deadline}}</p>
 
-            <p v-if="exampleCard.reasonRefund && !showReasonRefundFlag" ><b>Нужно <span v-if="column_id=='third'">было</span> доработать </b> {{ exampleCard.reasonRefund }} </p>
+            <p class="blue_text" v-if="exampleCard.reasonRefund && !showReasonRefundFlag" ><b>Нужно <span v-if="column_id=='third'">было</span> доработать: </b> {{ exampleCard.reasonRefund }} </p>
 
             <button class="btn_style" v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="deleteCard(indexInList)">Удалить</button>
             <button class="btn_style" v-show="(column_id=='first' || column_id=='second') && !cardRedactionFlag" @click.prevent="cardRedactionFlag= true">Редактировать</button>
@@ -157,7 +164,7 @@ Vue.component('card', {
                 <span v-if="showReasonRefundFlag && errorRefund != null" class="red_text"> {{ errorRefund }} </span> 
                 <input v-if="showReasonRefundFlag" type="text" v-model="exampleCard.reasonRefund">   
             </p>
-            <button class="move_btn btn_style" v-show="column_id=='third' && showReasonRefundFlag" @click.prevent="showReasonRefundFlag= false">Отмена</button>
+            <button class="move_btn btn_style" v-show="column_id=='third' && showReasonRefundFlag" @click.prevent="cancelRemoving">Отмена</button>
             <button class="move_btn btn_style" v-show="column_id=='third' && showReasonRefundFlag" @click.prevent="moveCardToSecondFromThird">Вернуть</button>
 
             <button class="move_btn btn_style" v-show="column_id=='third' && !cardRedactionFlag" @click.prevent="moveCardToFourth"> >> </button>
@@ -209,6 +216,7 @@ Vue.component('card', {
             if(!this.exampleCard.reasonRefund){
                 this.errorRefund = "Нужно указать причину возврата"
             }else{
+
                 let copy = this.copyCard();
                 eventBus.$emit('move-card-to-second', copy);
                 eventBus.$emit('delete-from-third', this.indexInList);
@@ -220,6 +228,10 @@ Vue.component('card', {
             eventBus.$emit('move-card-to-fourth', copy);
             eventBus.$emit('delete-from-third', this.indexInList);
         },
+        cancelRemoving(){
+            this.showReasonRefundFlag= false;
+            // this.exampleCard.reasonRefund = null;
+        },
         deleteCard(index){
             eventBus.$emit('delete-from-first',(index));
         },
@@ -228,10 +240,75 @@ Vue.component('card', {
             copy.date= Object.assign({}, this.exampleCard.date);
             copy.dateOfRed= Object.assign({}, this.exampleCard.dateOfRed);
             return copy;
+        },
+        checkOverdueDifference(){
+            if(this.column_id=='fourth'){
+                let testDayNow = new Date();
+                console.log(testDayNow.getDate());
+                let deadlineData = this.exampleCard.deadline.split('-');
+                let yearDl = Number(deadlineData[0]);
+                let monthDl = Number(deadlineData[1]);
+                let dayDl = Number(deadlineData[2]);
+
+                let yearNow = new Date().getFullYear();
+                let monthNow = (new Date().getMonth()) + 1;
+                let dayNow = new Date().getDate();
+
+                let difDay = dayNow - dayDl;
+                let difMonth = monthNow - monthDl;
+                let difYear = yearNow - yearDl;
+
+                if(difYear < 0){ //Есть запас - год дедлайна не наступил
+                    this.exampleCard.overdueFlag = false;
+                    console.log(`год дедлайна - ${yearDl}`);
+                    console.log(`год сейчас - ${yearNow}`);
+
+                }else if(difYear == 0){ //дедлайн в этом году - продолжаем выяснять
+                    console.log(`год дедлайна - ${yearDl}`);
+                    console.log(`год сейчас - ${yearNow}`);
+
+                    if(difMonth < 0){ //Запас по месяцам есть
+                        console.log(`месяц дедлайна - ${monthDl}`);
+                        console.log(`месяц сейчас - ${monthNow}`);
+                        this.exampleCard.overdueFlag = false;
+                    }else if(difMonth == 0){ //дедлайн в этом месяце - нужно посмотреть по дням
+                        console.log(`месяц дедлайна - ${monthDl}`);
+                        console.log(`месяц сейчас - ${monthNow}`);
+
+                        if(difDay<0){
+                            console.log(`День дедлайна - ${dayDl}`);
+                            console.log(`День сейчас - ${dayNow}`);
+                            this.exampleCard.overdueFlag = false;
+                        }else if(difDay ==0){ //Сделали сегодня - уже поздно
+                            console.log(`День дедлайна - ${dayDl}`);
+                            console.log(`День сейчас - ${dayNow}`);
+                            this.exampleCard.overdueFlag = true;
+                        }else{
+                            console.log(`День дедлайна - ${dayDl}`);
+                            console.log(`День сейчас - ${dayNow}`);
+                            this.exampleCard.overdueFlag = true;
+                        }
+                    }else{ //дедлеайн был в прошлом месяце
+                        console.log(`месяц дедлайна - ${monthDl}`);
+                        console.log(`месяц сейчас - ${monthNow}`);
+                        this.exampleCard.overdueFlag = true;
+                    }
+                }else{ // дэдлайн был в прошлом году
+                    console.log(`год дедлайна - ${yearDl}`);
+                    console.log(`год сейчас - ${yearNow}`);
+                    this.exampleCard.overdueFlag = true;
+                }
+
+
+
+
+
+
+            }
         }
     },
     mounted(){
-
+        this.checkOverdueDifference();
     }
 })
 
@@ -272,6 +349,12 @@ Vue.component('column', {
                 this.showFormFlag= true;
             }
         }),
+
+            eventBus.$on('cancel-create-card',()=>{
+                if(this.column_id == 'first'){
+                    this.showFormFlag= false;
+                }
+            }),
 
             eventBus.$on('take-new-card', (copy)=>{
                 if(this.column_id=='first'){

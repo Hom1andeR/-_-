@@ -41,6 +41,17 @@ body{
     border-radius: 7px;
     width: 20vw;
 }
+.red-card-space{
+    background-color:rgb(250, 219, 209);
+    border-radius: 7px;
+    width: 20vw;
+}
+.red-card-space > p{
+    margin:7px;
+}
+.red-card-space > div{
+    margin:7px;
+}
 .card-space > p{
     margin:7px;
 }
@@ -109,4 +120,8 @@ body{
     color:rgb(255, 51, 51);
     background-color: rgb(238, 253, 221);
     border-radius:7px;
+    border:2px solid red;
+}
+.blue_text{
+    color:rgb(23, 187, 236);
 }
