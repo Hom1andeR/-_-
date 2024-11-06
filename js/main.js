@@ -10,13 +10,13 @@ Vue.component('creator', {
     template:
         `
         <div class="creator">
-            <p>Название</p>
+            <p><b>Название</b></p>
             <input type="text" v-model="blank.title">
             <p>Описание</p>
             <textarea col="12" rows="4" v-model="blank.description"></textarea><br>
             <p>Когда сделать</p>
             <input type="date" v-model="blank.deadline"><br>
-            <button @click.prevent="submitCreateForm">Добавить</button>
+            <button class="btn_style" @click.prevent="submitCreateForm">Добавить</button>
         </div>
     `,
     data(){
@@ -97,21 +97,21 @@ Vue.component('card', {
             <p><b>Название: {{exampleCard.title}}</b></p>
             <input type="text" v-if="cardRedactionFlag" v-model="blankForRedaction.title">
 
-            <p>Описание: {{exampleCard.description}}</p>
-            <textarea col="12" rows="4" v-if="cardRedactionFlag" v-model="blankForRedaction.description"></textarea>
+            <p><b>Описание:</b><br> {{exampleCard.description}}</p>
+            <textarea col="24" rows="4" v-if="cardRedactionFlag" v-model="blankForRedaction.description"></textarea>
 
-            <div v-show="exampleCard.date.day">Задание создано :
+            <div v-show="exampleCard.date.day"><b>Задание создано :</b>
                 <span>{{exampleCard.date.day}}.</span>
-                <span>{{exampleCard.date.month}}</span>
+                <span>{{exampleCard.date.month}}.</span>
                 <span>{{exampleCard.date.year}}</span>
                 &nbsp
                 <span>{{exampleCard.date.hour}}:</span>
                 <span>{{exampleCard.date.min}}</span>
             </div>
 
-            <div v-show="exampleCard.dateOfRed.day">Задание редактировано :
+            <div v-show="exampleCard.dateOfRed.day"><b>Задание редактировано :</b>
                 <span>{{exampleCard.dateOfRed.day}}.</span>
-                <span>{{exampleCard.dateOfRed.month}}</span>
+                <span>{{exampleCard.dateOfRed.month}}.</span>
                 <span>{{exampleCard.dateOfRed.year}}</span>
                 &nbsp
                 <span>{{exampleCard.dateOfRed.hour}}:</span>
@@ -119,15 +119,15 @@ Vue.component('card', {
             </div>
 
 
-            <p v-show="cardRedactionFlag">Поменять дэдлайн<input  type="date" v-model="blankForRedaction.deadline"> </p>
+            <p v-show="cardRedactionFlag"><b>Поменять дэдлайн :</b><input  type="date" v-model="blankForRedaction.deadline"> </p>
 
-            <p>Сделать до: {{exampleCard.deadline}}</p>
+            <p><b>Сделать до:</b> {{exampleCard.deadline}}</p>
 
-            <button v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="deleteCard(indexInList)">Удалить</button>
-            <button v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="cardRedactionFlag= true">Редактировать</button>
-            <button v-show="cardRedactionFlag" @click.prevent="cancelRedaction">Отмена</button>
-            <button v-show="cardRedactionFlag" @click.prevent="submitRedForm">Сохранить</button>
-            <button class="move_btn" v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="moveCardToSecond"> >> </button>
+            <button class="btn_style" v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="deleteCard(indexInList)">Удалить</button>
+            <button class="btn_style" v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="cardRedactionFlag= true">Редактировать</button>
+            <button class="btn_style" v-show="cardRedactionFlag" @click.prevent="cancelRedaction">Отмена</button>
+            <button  class="btn_style" v-show="cardRedactionFlag" @click.prevent="submitRedForm">Сохранить</button>
+            <button class="move_btn btn_style" v-show="column_id=='first' && !cardRedactionFlag" @click.prevent="moveCardToSecond"> >> </button>
         </div>
         `
     ,
@@ -203,7 +203,7 @@ Vue.component('column', {
     <div class="column-space">
         <p>{{ name }}</p>
         <creator v-if="column_id=='first' && showFormFlag"></creator>
-        <div v-show="list" v-for="(card, index) in list">
+        <div class="align-center" v-show="list" v-for="(card, index) in list">
             <card :column_id="column_id" :exampleCard="card" :indexInList="index"></card>
         </div>
         
