@@ -1,8 +1,3 @@
-//eventBus.$emit | need-create-card - сигнал от кнопки создания первому стобцу на отображение новой формы для создания карты
-
-
-
-
 
 let eventBus = new Vue();
 
@@ -230,7 +225,6 @@ Vue.component('card', {
         },
         cancelRemoving(){
             this.showReasonRefundFlag= false;
-            // this.exampleCard.reasonRefund = null;
         },
         deleteCard(index){
             eventBus.$emit('delete-from-first',(index));
@@ -258,20 +252,20 @@ Vue.component('card', {
                 let difMonth = monthNow - monthDl;
                 let difYear = yearNow - yearDl;
 
-                if(difYear < 0){ //Есть запас - год дедлайна не наступил
+                if(difYear < 0){
                     this.exampleCard.overdueFlag = false;
                     console.log(`год дедлайна - ${yearDl}`);
                     console.log(`год сейчас - ${yearNow}`);
 
-                }else if(difYear == 0){ //дедлайн в этом году - продолжаем выяснять
+                }else if(difYear == 0){
                     console.log(`год дедлайна - ${yearDl}`);
                     console.log(`год сейчас - ${yearNow}`);
 
-                    if(difMonth < 0){ //Запас по месяцам есть
+                    if(difMonth < 0){
                         console.log(`месяц дедлайна - ${monthDl}`);
                         console.log(`месяц сейчас - ${monthNow}`);
                         this.exampleCard.overdueFlag = false;
-                    }else if(difMonth == 0){ //дедлайн в этом месяце - нужно посмотреть по дням
+                    }else if(difMonth == 0){
                         console.log(`месяц дедлайна - ${monthDl}`);
                         console.log(`месяц сейчас - ${monthNow}`);
 
@@ -279,7 +273,7 @@ Vue.component('card', {
                             console.log(`День дедлайна - ${dayDl}`);
                             console.log(`День сейчас - ${dayNow}`);
                             this.exampleCard.overdueFlag = false;
-                        }else if(difDay ==0){ //Сделали сегодня - уже поздно
+                        }else if(difDay ==0){
                             console.log(`День дедлайна - ${dayDl}`);
                             console.log(`День сейчас - ${dayNow}`);
                             this.exampleCard.overdueFlag = true;
@@ -288,12 +282,12 @@ Vue.component('card', {
                             console.log(`День сейчас - ${dayNow}`);
                             this.exampleCard.overdueFlag = true;
                         }
-                    }else{ //дедлеайн был в прошлом месяце
+                    }else{
                         console.log(`месяц дедлайна - ${monthDl}`);
                         console.log(`месяц сейчас - ${monthNow}`);
                         this.exampleCard.overdueFlag = true;
                     }
-                }else{ // дэдлайн был в прошлом году
+                }else{
                     console.log(`год дедлайна - ${yearDl}`);
                     console.log(`год сейчас - ${yearNow}`);
                     this.exampleCard.overdueFlag = true;
