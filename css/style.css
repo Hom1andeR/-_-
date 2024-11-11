@@ -5,7 +5,7 @@
 }
 
 body{
-    background-color: rgb(255, 227, 155);
+    background-color: rgb(93, 0, 255);
 }
 .for-4-col{
     width:100%;
@@ -60,43 +60,75 @@ body{
 }
 .card-space > [type = "text"]{
     margin-left:7px;
-    border:2px solid rgb(151, 219, 41);
+    border:2px solid rgb(160, 6, 255);
     border-radius:4px;
 }
 .card-space > [type = "date"]{
     margin-left:7px;
-    border:2px solid rgb(107, 158, 26);
+    border:2px solid rgb(127, 0, 255);
     border-radius:4px;
     padding:2px;
 }
 .card-space > textarea{
     margin-left:7px;
-    border:2px solid rgb(151, 219, 41);
+    border:2px solid rgb(170, 0, 255);
     border-radius:4px;
     max-width:90%;
 }
 .btn_style{
     margin:7px;
-    border:2px solid rgb(151, 219, 41);
-    border-radius:4px;
+    border:2px solid rgb(123, 0, 247);
+    border-radius:7px;
     padding:4px;
 }
 [type="text"]{
     margin-left:7px;
-    border:2px solid rgb(107, 158, 26);
+    border:2px solid rgb(93, 0, 255);
     border-radius:4px;
     padding:2px;
 }
+
+.aboba-overlay{
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+
+}
+/*.aboba-content{*/
+/*    background: white;*/
+/*    padding: 20px;*/
+/*    border-radius: 8px;*/
+/*    width: 500px;*/
+/*    position: relative;*/
+/*}*/
+.creator{
+    z-index: 3;
+    background-color: rgb(255, 255, 255);
+    width: 40%;
+    height: 40%;
+    border-radius: 8px;
+    width: 300px;
+    height: auto;
+}
+
+
 .creator > textarea{
     margin-left:7px;
-    border:2px solid rgb(104, 143, 190);
+    border:2px solid rgb(93, 0, 255);
     border-radius:4px;
     max-width:90%;
     padding:2px;
 }
 .creator > [type="date"]{
     margin-left:7px;
-    border:2px solid rgb(107, 158, 26);
+    border:2px solid rgb(93, 0, 255);
     border-radius:4px;
     padding:2px;
 }
@@ -110,9 +142,9 @@ body{
     margin:15px;
     padding:15px;
     border-radius:7px;
-    border:2px solid rgb(107, 158, 26);
-    background-color: rgb(238, 253, 221);
-    color:rgb(94, 150, 5);
+    border:2px solid rgb(0, 0, 0);
+    background-color: rgb(93, 0, 255);
+    color:rgb(0, 0, 0);
     font-size:20px;
     font-weight: 700;
 }
@@ -122,6 +154,10 @@ body{
     border-radius:7px;
     border:2px solid red;
 }
-.blue_text{
-    color:rgb(23, 187, 236);
+.green_text{
+    color: rgb(102, 255, 0);
+}
+.unmark{
+    list-style-type: none;
+
 }
